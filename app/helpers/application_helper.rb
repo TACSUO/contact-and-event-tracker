@@ -1,5 +1,9 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
+  
+  def is_current_user?(user)
+    current_user == user
+  end
 
   def site_title
     @site_title ||= SiteSetting.read_setting('site title') || "Contact and Event Tracker"
@@ -41,7 +45,7 @@ module ApplicationHelper
     if public_address or logged_in?
       super(email_address, name, html_options)
     else
-      content_tag(:span, "#{link_to('log in', new_user_session_path)} to view emails", :style => "padding: 3px; background-color: gray; color: white;")
+      content_tag(:span, "#{link_to('login', new_user_session_path)} to view emails", :style => "padding: 3px; background-color: gray; color: white;")
     end
   end
 end

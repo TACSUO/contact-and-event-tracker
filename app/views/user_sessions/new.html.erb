@@ -14,18 +14,12 @@
     <br />
     <%= f.submit "Log in" %>
   <% end %>
-  <br/>
-  <br/>
-  <p>
-    <%= link_to 'register a new account', new_user_path %>
+  <p style="text-align: right; margin: 20px;">
+    <%= link_to 'Register', new_account_path, :class => 'fake_button' %>
+    <br />
+    <%= link_to 'Forgot Password?', new_password_reset_path, :class => 'fake_button' %>
   </p>
-  <p>
-    <%= link_to 'forgot password?', new_password_reset_path %>
-  </p>
-  <br/>
-
 </div>
-
 
 <div class="span-10 last">
 
@@ -61,7 +55,6 @@
     this site. For more information, visit <a href="http://openid.net/get-an-openid/what-is-openid/" target="_blank">OpenID.net</a>.
   </p>
 </div>
-
 
 <script type="text/javascript">
   $(document).ready(function() {

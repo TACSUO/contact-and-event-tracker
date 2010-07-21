@@ -1,5 +1,5 @@
 class EventsController < ApplicationController
-  before_filter :require_admin_user, :except => [:index, :show]
+  before_filter :load_and_authorize_current_user, :except => [:index, :show]
   
   # GET /events
   # GET /events.xml
@@ -13,6 +13,12 @@ class EventsController < ApplicationController
     end
   end
 
+  def search
+    # TODO render a search results page instead of a calendar
+    @events = Event.search(params[:q],
+      :narrow_fields => params[:fields] ? params[:fields].keys : nil).paginate :page => params[:page]
+  end
+  
   # GET /events/1
   # GET /events/1.xml
   def show
@@ -91,10 +97,10 @@ class EventsController < ApplicationController
 
   def drop_contact
     @event = Event.find(params[:id])
-    if @event.drop_contacts(params[:contact_ids] || params[:contact_id])
-      flash[:notice] = "Contact(s) dropped from #{@event.name}."
+    if @event.drop_attendees(params[:contact_ids] || params[:contact_id])
+      flash[:notice] = "Contact(s) removed from #{@event.name} roster."
     else
-      flash[:warning] = "Failed to drop contact(s) from #{@event.name}. (#{@event.errors.full_messages.join('; ')}"
+      flash[:warning] = "Failed to remove contact(s) from #{@event.name} roster. (#{@event.errors.full_messages.join('; ')}"
     end
     redirect_to @event
   end
@@ -107,14 +113,10 @@ class EventsController < ApplicationController
 
   def add_contacts
     @event = Event.find(params[:id])
-    #@event.contacts += Contact.find(params[:contact_ids])
-    @event.changeset! do
-      @event.attendees += Contact.find(params[:contact_ids]).collect{|c| Attendee.new(:contact => c)}
-      if @event.save
-        flash[:notice] = "Contacts(s) added to #{@event.name}."
-      else
-        flash[:warning] = "Failed to add contact(s) to #{@event.name}. (#{@event.errors.full_messages.join('; ')}"
-      end
+    if @event.add_attendees(params[:contact_ids])
+      flash[:notice] = "Contacts(s) added to #{@event.name}."
+    else
+      flash[:warning] = "Failed to add contact(s) to #{@event.name}. (#{@event.errors.full_messages.join('; ')}"
     end
     redirect_to @event
   end

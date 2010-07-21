@@ -54,6 +54,4 @@
   <% end %>
 </ul>
 
-<% if is_admin? or (current_user and @contact.user and current_user == @contact.user) %>
-<p>[<%= link_to "edit this contact", edit_contact_path(@contact) %>]</p>
-<% end %>
+<%= render :partial => 'sidebar' %>

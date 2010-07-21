@@ -40,14 +40,12 @@
   </table>
 <% end %>
 
-
 <% content_for :sidebar do %>
   <h4>Contact Group Management</h4>
-  <p><%= link_to 'edit group name', edit_contact_group_path(@contact_group) %></p>
-  <p><%= link_to 'list contacts in this group', @contact_group %></p>
-  <p><%= link_to 'list of contact groups', contact_groups_path %></p>
+  <p><%= link_to 'Edit Group Name', edit_contact_group_path(@contact_group), :class => 'fake_button' %></p>
+  <p><%= link_to 'Group Contacts', @contact_group, :class => 'fake_button' %></p>
+  <p><%= link_to 'Contact Groups', contact_groups_path, :class => 'fake_button' %></p>
 <% end %>
-
 
 <script type="text/javascript">
 $(document).ready(function() {

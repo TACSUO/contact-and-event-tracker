@@ -1,6 +1,9 @@
+<div class="span-10">
 <h1>Event</h1>
 
 <%= render :partial => 'event_details', :locals => { :event => @event } %>
+
+<%= render :partial => 'sidebar' %>
 
 <h3>Attendees/Participants</h3>
 
@@ -23,7 +26,7 @@
       <tr>
         <th>Full Name</th>
         <th>Email</th>
-        <% if is_admin? %>
+        <% if has_authorization?(:update, :events) %>
         <th></th>
         <th></th>
         <% end %>
@@ -33,17 +36,17 @@
       <tr>
         <td><%= link_to contact.name, contact %></td>
         <td><%= mail_to contact.email, contact.email, :encode => "javascript" %></td>
-        <% if is_admin? %>
+        <% if has_authorization?(:update, :events) %>
         <td>
           <%= link_to "drop from event",
                 drop_contact_event_path(@event, :contact_id => contact.id),
-                :method => :post %>
+                :method => :post, :class => 'fake_button' %>
         </td>
         <td><%= check_box_tag "contact_ids[]", contact.id %></td>
         <% end %>
       </tr>
     <% end %>
-      <% if is_admin? %>
+      <% if has_authorization?(:update, :events) %>
       <tr>
         <td colspan="4" style="text-align:right">
           <%= submit_tag "drop selected contacts from this event" %>
@@ -53,46 +56,13 @@
     </table>
   <% end %>
 <% end %>
+</div>
 
-<% if is_admin? %>
-  <br/>
-  <p>
-  [<%= link_to 'Add attendees to this event', add_attendees_event_path(@event) %> &nbsp; | &nbsp;
-  <%= link_to 'Edit this event', edit_event_path(@event) %> &nbsp; | &nbsp;
-  <%= link_to 'List of Events', events_path %>]
-  </p>
-  <br/>
+<div class="span-8 last">
+<% if has_authorization?(:create, :file_attachments) %>
   <%= render :partial => 'file_attachments/plupload_with_listing', :locals => {:file_attachments => @event.file_attachments, :event => @event} %>
 <% else %>
-<div>
   <h4>Files</h4>
   <%= render :partial => 'file_attachments/file_attachments', :object => @event.file_attachments %>
+<% end %>  
 </div>
-<% end %>
-
-
-<% content_for :sidebar do %>
-  <h4>Revisions</h4>
-
-  <p>
-    Current version: <%= @event.revisable_number %> modified by 
-    <%= @event.modified_by_user ? @event.modified_by_user.id : '<em>unknown</em>' %>
-      on <%= @event.updated_at.strftime "%m/%d/%Y" %>
-  </p>
-
-  <% if @event.revisions.empty? %>
-    <p><em>This is the first version of this event.</em></p>
-  <% else %>
-    <% form_tag event_revisions_path, :method => :get do %>
-      <select name="id">
-        <% @event.revisions.each do |evr| %>
-          <option value="<%= evr.id %>">
-            Version <%= evr.revisable_number %>
-            (<%= evr.revisable_current_at.strftime "%m/%d/%y" %>)
-          </option>
-        <% end %>
-      </select>
-    <%= submit_tag "go"  %>
-    <% end %>
-  <% end %>
-<% end %>

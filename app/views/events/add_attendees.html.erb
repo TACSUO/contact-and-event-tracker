@@ -23,9 +23,4 @@
   </table>
 <% end %>
 
-
-<p class="admin_links">
-  <%= link_to 'details of this event', @event %> &nbsp; | &nbsp;
-  <%= link_to 'edit this event', edit_event_path(@event) %> &nbsp; | &nbsp;
-  <%= link_to 'list of events', events_path %>
-</p>
+<%= render :partial => 'sidebar' %>
